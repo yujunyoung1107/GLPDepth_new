@@ -27,7 +27,7 @@ def eval_depth(pred, target):
             'log10':log10.item(), 'silog':silog.item()}
 
 
-def cropping_img(args, min_dep, max_dep, gt_depth):
+def cropping_img(pred, min_dep, max_dep, gt_depth):
     min_depth_eval = min_dep
 
     max_depth_eval = max_dep
