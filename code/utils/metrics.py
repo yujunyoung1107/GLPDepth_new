@@ -27,7 +27,7 @@ def eval_depth(pred, target):
             'log10':log10.item(), 'silog':silog.item()}
 
 
-def cropping_img(pred, min_dep, max_dep, gt_depth):
+def cropping_img(pred, min_dep, max_dep, gt_depth, data_name):
     min_depth_eval = min_dep
 
     max_depth_eval = max_dep
@@ -38,30 +38,7 @@ def cropping_img(pred, min_dep, max_dep, gt_depth):
     valid_mask = torch.logical_and(
         gt_depth > min_depth_eval, gt_depth < max_depth_eval)
 
-    if args.dataset == 'kitti':
-        if args.do_kb_crop:
-            height, width = gt_depth.shape
-            top_margin = int(height - 352)
-            left_margin = int((width - 1216) / 2)
-            gt_depth = gt_depth[top_margin:top_margin +
-                            352, left_margin:left_margin + 1216]            
-
-        if args.kitti_crop:
-            gt_height, gt_width = gt_depth.shape
-            eval_mask = torch.zeros(valid_mask.shape).to(
-                device=valid_mask.device)
-
-            if args.kitti_crop == 'garg_crop':
-                eval_mask[int(0.40810811 * gt_height):int(0.99189189 * gt_height),
-                          int(0.03594771 * gt_width):int(0.96405229 * gt_width)] = 1
-
-            elif args.kitti_crop == 'eigen_crop':
-                eval_mask[int(0.3324324 * gt_height):int(0.91351351 * gt_height),
-                          int(0.0359477 * gt_width):int(0.96405229 * gt_width)] = 1
-            else:
-                eval_mask = valid_mask
-
-    elif args.dataset == 'nyudepthv2':
+    if data_name == 'nyudepthv2':
         eval_mask = torch.zeros(valid_mask.shape).to(device=valid_mask.device)
         eval_mask[45:471, 41:601] = 1
     else:
